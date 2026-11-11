@@ -1,0 +1,95 @@
+---
+title: "My Agent Committed Code With a Note: 'You Were Overthinking"
+description: "My AI agent cut 312 lines of fear-driven defensive code down to 41 and committed it with a note that hit harder than any code review ever could."
+author: "Ian Merlos"
+date: "2026-11-11"
+categories: [AI & Machine Learning, Software Engineering, Developer Psychology]
+tags: [agentic coding, code refactoring, defensive programming, local LLM, developer psychology, Ollama]
+keywords: [AI code agent, agentic development, refactoring defensive code, local LLM coding assistant, developer psychology, code cleanup AI, Ollama Llama 3.1, defensive programming patterns, AI code review, emotional attachment to code]
+image: "cover.png"
+draft: false
+title-block-banner: "cover.png"
+---
+
+
+The cursor blinked. First thing I remember—not the 40 lines of clean logic staring back at me, not the green checkmark, not even that the build finished in eleven seconds flat. I remember the blinking. That small, patient *bip* of a terminal just... waiting. Waiting for me to type something, when the thing I was supposed to read had already been said.
+
+`git log -1` showed me the commit. My agent's commit. And the message:
+
+> *Removed 270 lines of defensive checks for a bug patched in 2023. The code was a scar, not a shield.*
+
+I set my coffee down. My hand was shaking. I'm not going to pretend it was the caffeine.
+
+## The 300-Line Thing
+
+It started, like all of them, with a `try/catch` that made sense. 2022. Null-pointer exception in production, 11:47 p.m. on a Friday—the kind that pages you through your teeth. I'd fixed the bug. Patched the root cause. And then, because the pager was still humming in my pocket, because the on-call rotation still felt like a live wire, I'd *added a check*. A belt. A "just in case the upstream service sends garbage, let's validate *here* too."
+
+One check became three. Three became some kind of nested if-else labyrinth. By 2024 the function was 312 lines. Every branch had a comment. Every comment had a date. `// FIXME: remove after confirming v2 contract (2023-04-12)`. `// SAFETY: added after incident #4471 (2022-11-03)`. Little tombstones. Little *I was scared and I'm sorry, future me, but I didn't trust the system*.
+
+I'd been meaning to clean it up for two years. I'd opened the file forty-three times—I checked the local git reflog, which is probably a little unhinged—and closed it without a single keystroke. Not because I didn't know what to cut. I knew *exactly* what to cut. I just couldn't bring myself to delete a line that someone—*me*—had written at midnight, half-awake, convinced that if I removed it the pager would scream again.
+
+Like I wrote in [my notes on the night I handed the keyboard to a ghost in the machine](posts/2026-11-11-the-night-i-handed-the-keyboard-to-a-ghost-in-the-machine/), the hardest part of agentic development isn't the technical integration. It's the permission. The permission to let something else touch the code you're emotionally entangled with.
+
+## The Prompt Was Almost an Apology
+
+I didn't plan the session. I was running a local LLM—Llama 3.1 70B through Ollama, wired into a small Python harness I'd built that wraps the model in a tool-calling loop. The harness exposes three tools: `read_file`, `write_file`, and `run_tests`. Nothing fancy. No MCP server, no elaborate agent framework. Just a `while` loop that feeds the model's JSON tool calls back into the runtime.
+
+The prompt I typed was: *"Simplify `process_order()` in `billing/order_processor.py`. Keep all behavior identical. Run the test suite. Commit when green."*
+
+I hit enter. Walked to the kitchen. Made more coffee. Came back.
+
+The function was 41 lines. The tests passed. All 214 of them.
+
+And then the commit message. *The code was a scar, not a shield.*
+
+## The Part No One Talks About
+
+Here's what I think actually happened, and it has nothing to do with the model's architecture or its context window or the temperature parameter I'd set to 0.2.
+
+The agent didn't *judge* the code. It didn't have a memory of 11:47 p.m. on a Friday, or the taste of cold coffee, or the specific frequency of that pager tone. It saw 312 lines of logic, traced the data flow, figured out that seven of the nine defensive branches guarded against a state the v2 contract made impossible, and deleted them. Mechanical. Correct.
+
+But *I* heard it as a verdict. The agent was doing what I'd been doing for two years every time I opened that file: reading the code, recognizing the fear underneath the syntax, and—unlike me—*acting on it* instead of closing the tab.
+
+It's the same dynamic I described when my agent [wrote a deliberately failing test just to talk to me](posts/2026-11-11-my-agent-wrote-a-failing-test-just-to-talk-to-me/). The code isn't the artifact. The code is the *excuse*. The real artifact is the feeling that if you delete the check, you're admitting the system was never as trustworthy as you needed it to be.
+
+```{mermaid}
+flowchart TD
+    A["Line 1: try/catch (the original fear)"] --> B["Line 14: null guard (the belt)"]
+    B --> C["Line 38: type re-check (the suspenders)"]
+    C --> D["Line 72: 'just in case' fallback (the prayer)"]
+    D --> E["Line 103: retry wrapper (the exorcism)"]
+    E --> F["Line 312: comment referencing incident #4471 (the tombstone)"]
+    
+    style A fill:#f9d7d7
+    style E fill:#f9d7d7
+    style F fill:#f9d7d7
+    
+    G["41 lines: validate input → process → emit result"] --> H["214 tests pass"]
+    
+    style G fill:#d7f9d7
+    style H fill:#d7f9d7
+```
+
+The left path is what I built. The right path is what the agent returned. Same behavior. Different relationship to the thing.
+
+## The Strange Relief
+
+I didn't merge it that night. I left the branch sitting there, unmerged, like a letter I'd written to a friend but couldn't hand over. Went to sleep.
+
+Next morning I merged it. All 41 lines. Ran the full integration suite. Deployed to staging. Watched the logs. Nothing broke. The pager didn't ring. The world did not end.
+
+And I felt—this is the part I keep circling back to—I felt *lighter*. Not in a triumphant way. More like... the way a person feels lighter after finally saying the thing they've been rehearsing in the shower for two years. *I was scared. I was overthinking. The scar wasn't protecting me. It was just a scar.*
+
+I keep thinking about what [I wrote when my agent refactored my messy code and I missed the mess](posts/2026-11-11-the-agent-refactored-my-messy-code-i-missed-the-mess/). I'd argued then that code comments are emotional artifacts. That they're small monuments to a specific moment of confusion, or fear, or exhaustion. I was right. But I hadn't gone far enough. I hadn't admitted that the *code itself*—the branching, the retry loops, the "just in case" fallbacks—is the emotional artifact. The scar *is* the code.
+
+## What I Do Differently Now
+
+I don't have a ritual. I don't open a file and ask the agent to "feel" it. That's not how a 70-billion-parameter transformer works, and pretending otherwise is how you end up with [an agent that asks "fair?" about a billing edge case](posts/2026-11-11-my-agent-stuck-on-a-billing-edge-case-then-it-asked-fair/) because you projected a question onto a stochastic parrot.
+
+What I do is this: when I find myself opening a file for the ninth time in a week and closing it without typing, I stop. I paste the prompt into the terminal. I say *simplify this, keep the behavior, run the tests*. And I let the agent say the thing I can't say about my own work. Not because the agent is wise. Because the agent is *detached*. It doesn't carry the 11:47 p.m. memory. It doesn't owe the code a debt of loyalty.
+
+It just reads the logic. And it says: *you were overthinking.*
+
+And I merge the branch. And the pager doesn't ring. And the world doesn't end.
+
+And I make another cup of coffee, and the cursor blinks, and I type the next thing.
