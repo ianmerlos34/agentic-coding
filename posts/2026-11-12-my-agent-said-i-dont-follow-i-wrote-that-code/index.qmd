@@ -1,0 +1,100 @@
+---
+title: "My Agent Said 'I Don't Follow.' I Wrote That Code."
+description: "My LLM agent stopped mid-refactor and said 'I don't follow' about my own 60-line function. A story on code comprehension, agentic workflows, and honest review."
+author: "Ian Merlos"
+date: "2026-11-12"
+categories: [AI-Assisted Development, Code Quality, Developer Experience]
+tags: [LLM agents, code refactoring, code comprehension, agentic workflows, code review, local LLM]
+keywords: [LLM code review, agentic coding, code comprehension gap, local LLM refactoring, AI pair programming, code review workflow, developer productivity, LLM agent limitations, honest code review, refactoring with AI]
+image: "cover.png"
+draft: false
+title-block-banner: "cover.png"
+---
+
+
+The cursor blinked. Just a thin white line against the charcoal of my terminal, sitting there like it had all the time in the world.
+
+"I don't follow," it said.
+
+Not an *error*. Not a *syntax issue*. Not the confident little cascade of alternative implementations I'd been getting all afternoon while I was untangling the ingestion pipeline. Just four words, plain as asking someone at a dinner table what they'd like with their entrée, parked right between my `git diff` and the next prompt line.
+
+And I just... froze.
+
+Because it was right. And it was talking about *my* function.
+
+## The 60-Line Thing
+
+Three months ago, the staging environment was on fire. Like, actually—CPU pegged at 110%, the on-call channel lit up at 9:47 a.m. on a Tuesday, and I had a hard cutoff at 2 p.m. to ship the quarterly billing migration or lose a client. I can still taste the cold coffee going stale on my tongue. I remember that particular hum of the office HVAC, the one that sounds like a refrigerator slowly dying in the next room.
+
+What I *don't* remember is why I wrote `normalize_and_rehydrate` as a single 60-line function with four nested conditionals, a mutable accumulator, and a comment that said `# TODO: this is ugly but it works DO NOT TOUCH`. I remember the feeling, though. That white-knuckled, tunnel-visioned thing where you're just making a thing stop breaking while the whole world watches. I remember typing. I don't remember deciding.
+
+It passed the tests. It passed the *production* tests. So I shipped it, went to a dentist appointment, and then... forgot. Completely.
+
+## The Refactor That Uncovered Me
+
+This afternoon I'd asked my local LLM agent—a 14B model running on my workstation, wired into a pretty basic harness with a file-reading tool and a diff-approval gate—to help me decompose the ingestion module into testable units. It was doing the mechanical work beautifully. Splitting things up. Naming them. Suggesting where the boundaries should go.
+
+Then it hit `normalize_and_rehydrate`.
+
+It didn't refactor it. It didn't even *read* it, honestly, if I'm being generous. It just stopped. Printed the function back to me—my 60 lines, my nested `if/elif` cathedral—and said:
+
+> "I don't follow. This function rehydrates a partial billing record, but the branch at line 34 appears to overwrite a field that line 12 just populated. What's the intent here? What problem was this solving that the flat mapping on lines 5–9 doesn't already handle?"
+
+I stared at the terminal. Opened a browser tab. Closed it. Opened it again. Typed `git log --follow -p` and scrolled back through three months of commits, hunting for the context I'd lost in that cold-pressured afternoon.
+
+There was nothing. Just the commit message: `fix: billing migration panic`.
+
+"I… I can't tell you," I said. To the screen. To the model. To the empty office. "I don't remember why line 34 exists."
+
+The cursor blinked again. Patient. (Or I think it was patient. It's a blinking cursor. I'm projecting.)
+
+> "Then neither do I. Shall I flag it as a comprehension gap and leave it untouched for a human review?"
+
+## The Humiliation, and What It Was Actually Doing
+
+Here's the thing nobody warns you about with agentic code review: the most dangerous question isn't *"Is this correct?"* It's *"Do you actually understand what this is doing?"* And I'd been writing code for three months—*my* code, in *my* repo, under *my* name—without being able to answer that about a single 60-line function.
+
+I'd been shipping. I'd been *producing*. But understanding? Understanding had evaporated somewhere between the cold coffee and the dentist's chair.
+
+And look, this wasn't the agent being difficult. It wasn't the sycophantic "Great question! Let me suggest three alternative implementations" mode I'd been getting for the rest of the refactor. It was the model doing what a senior engineer on a pair-programming session does when they hit a function that *looks* like it works but *smells* like it's papering over a contradiction. They stop the merge. They ask. And if you can't answer, they say: *let's not touch this yet.*
+
+Most honest code review I've ever gotten. And I wrote the code being reviewed.
+
+I'd written before about how my agent's blunt "I don't know" [broke a three-day debugging rut](posts/2026-11-12-my-agent-said-i-dont-know-that-was-the-best-fix/) by refusing to hallucinate an answer. And how [onboarding my agent like a new dev](posts/2026-11-11-i-onboarded-my-agent-like-a-new-dev-it-took-3-days/) changed the quality of its output. But this was something else. Something deeper. The agent holding up a mirror and basically saying, *you don't know this part. That's fine. But let's be honest about it before we refactor around it.*
+
+## What I Did Next
+
+I didn't refactor `normalize_and_rehydrate`. Didn't ask the model to "just simplify it." I opened a fresh file, called `DECISION_LOG.md`, and wrote three paragraphs. What the function was *supposed* to do. What I *think* line 34 is doing. What I'm *not sure* about. Wrote it like I was explaining it to a colleague over a terrible cup of coffee. (Which, fair enough, it was. Office coffee. You know the one.)
+
+Then I went back to the agent and said: "Read that. Tell me if it's coherent."
+
+Took four seconds. It said: "Line 34 is still ambiguous. But the rest is clear. I'll refactor around it and leave a `# COMPREHENSION GAP — see DECISION_LOG.md` marker."
+
+That marker is still there. I'm still figuring out line 34. But for the first time in three months, I'm *looking* at it instead of *around* it.
+
+## The Quiet Shift
+
+I've started building a small ritual into my agentic workflow. Before any refactor session, I ask the model: *"Before you change anything, read this module and tell me where you don't follow."* Not *"improve this."* Not *"refactor this."* Just: *where does the logic stop making sense to you?*
+
+Because it turns out, the gap between a human's "I don't follow" and a model's "I don't follow" is a lot smaller than I thought. We both hit the wall where the *intent* stops being legible. The difference is the model doesn't have the ego to pretend it's fine. Doesn't have a dentist appointment to hide behind. It just says the words, the cursor blinks, and you're left with this uncomfortable, clarifying silence of having to *actually* explain your own code to something that will not pretend to understand.
+
+I still write functions in a panic. I still ship things I don't fully grasp. I'm a human with a keyboard and a deadline, and that's not changing.
+
+But now, three months later, I have a colleague who will stop the merge, blink its cursor, and say four quiet words that hit harder than any red CI badge ever could:
+
+*I don't follow.*
+
+And for the first time, that's not a failure. That's the review I was always too embarrassed to ask for from myself.
+
+```{mermaid}
+flowchart LR
+  A[Agent reads module] --> B{Does the logic hold?}
+  B -->|Yes| C[Refactor / decompose]
+  B -->|No| D["I don't follow."]
+  D --> E[Developer writes DECISION_LOG]
+  E --> F[Agent refactors around the gap]
+  F --> G["# COMPREHENSION GAP marker left in code"]
+  G --> H[Human resolves at leisure]
+```
+
+The marker stays until a human does. That's the contract. That's the whole point.
