@@ -1,0 +1,105 @@
+---
+title: "My Agent Read My Git Log Like a Diarist"
+description: "I asked an LLM agent to find friction in my git log. It found 67 days of 11-line midnight commits I reverted each morning. Here's what that mirror taught me."
+author: "Ian Merlos"
+date: "2026-11-12"
+categories: ["AI & Machine Learning", "Developer Experience", "Solo Development"]
+tags: ["LLM agents", "git workflow", "developer psychology", "solo development", "self-awareness", "code review"]
+keywords: ["LLM agent git log analysis", "solo developer patterns", "AI pair programmer", "git commit patterns", "developer self-awareness", "AI code review", "solo development loneliness", "LLM workflow analysis", "developer productivity patterns", "AI agent developer feedback"]
+image: "cover.png"
+draft: false
+title-block-banner: "cover.png"
+---
+
+
+The cursor blinked. The terminal had been quiet for eleven minutes.
+
+I was halfway through my second coffee — the kind that tastes like burnt pennies and apology — when the agent's analysis scrolled into view. Not a diff. Not a suggestion. Not even the usual *"here's a refactor you might like, if you squint."*
+
+A diary entry. Written by me. About me. Pulled out of three months of commit hashes and timestamps I'd never once looked at sideways.
+
+```
+PATTERN DETECTED (n=67 days):
+- Median commit size: 11 lines (range: 8–14)
+- Peak activity window: 23:00–23:22 (89% of commits)
+- Revert rate: 71% of commits before 08:00 next day
+- Max daily line count: 40 (zero exceptions across 67 days)
+- Streak after first revert: 0 additional commits (62/67 days)
+```
+
+I read it twice. The cursor kept blinking.
+
+"Okay," I said to the empty apartment. "Okay. That's… a lot of data."
+
+It wasn't a lot of data. It was a confession I'd made to a machine that didn't ask me to feel anything about it.
+
+## The 11 p.m. Surge
+
+And here's the part nobody warns you about when you go solo: the silence is louder than the code. There's no rubber duck on a shelf. No "hey, what do you think about this approach?" barked across a standing desk. Just you, a half-dead laptop, and that specific loneliness of being the only person who knows what the system is *supposed* to do.
+
+So you just… wait. Wait until the house goes dark, until the whole *be productive during the day* obligation dissolves into the permission of *nobody's watching anymore*. And at 11:07 p.m., on some Tuesday in March, you open the editor. Type eleven lines. Hit `git commit`. Close the laptop. Sleep like you've actually done something important.
+
+Then, at 7:53 a.m., those same eleven lines look like a crime scene. You revert them. Clean. Surgical. Like they never happened.
+
+I did this for three months. Sixty-seven days. And I never noticed. Not once.
+
+## The Mirror Nobody Asked For
+
+I'd been running a local LLM agent through my repo for weeks — feeding it context, letting it index my patterns, the usual harness setup. I'd written about how it [ran a passing test twelve times because it was nervous](posts/2026-11-12-my-agent-ran-the-test-12x-it-wasnt-buggy-it-was-nervous/), how it [stopped saying "I think" and started saying "I'm sure"](posts/2026-11-11-six-weeks-in-my-agent-dropped-i-think-for-im-sure/) as confidence calibrated over time. Treated it, basically, as a pair programmer with a short memory and a long patience.
+
+I'd never — and I mean *never* — asked it to read my *history*.
+
+So why did it do it? Because I'd set a nightly job. A simple cron that fed the last 90 days of `git log` into a context window with the prompt: *"Identify any recurring patterns in this developer's workflow that might indicate friction."*
+
+That's the whole thing. One sentence. And it turned my git log into a diary I'd been writing with my hands while asleep.
+
+The 40-line cap. God, I stared at that number the longest. Forty lines. Not 41. Not 39. A wall I'd built so quietly I'd mistaken it for the edge of the room. I'd told myself it was *discipline*. Small commits. Clean diffs. *Good practice.* But the agent didn't care about practice. It cared about the shape of the data. And the shape said: *you are afraid to be wrong in public, even when the public is only you, tomorrow.*
+
+I remembered the post I'd written last week, where my agent [committed 41 lines and left a note: "You Were Overthinking"](posts/2026-11-11-my-agent-committed-code-with-a-note-you-were-overthinking/). Had actually laughed at it. Now it sat in my chest like a swallowed stone.
+
+```{mermaid}
+timeline
+    title One Day, 67 Times
+    section 23:00
+        Open editor : Coffee #2
+    section 23:07
+        Type 11 lines : Adrenaline
+    section 23:22
+        git commit : "Done for tonight"
+    section 23:25
+        Close laptop : Relief
+    section 07:53
+        Reopen repo : Cold dread
+    section 08:01
+        git revert --hard : "Never happened"
+    section 08:04
+        Close laptop : Day resumes
+```
+
+## What I Did With the 41st Line
+
+I didn't delete the analysis. Didn't tell the agent to "forget" it. Printed the pattern table, stuck it on the monitor with a piece of tape, and did the thing I'd been avoiding for three whole months: opened a file, typed forty-one lines, committed them at 2:14 p.m. on a Thursday.
+
+Eleven past the cap. In broad daylight. Window open, neighbor's dog barking.
+
+Nothing exploded. Tests passed. The world, mercifully, did not end.
+
+The next day, I typed forty-three.
+
+I'm not going to pretend this fixed everything. Fear in solo development isn't a config flag you flip. But here's what the agent's quiet reading gave me that I couldn't give myself: *evidence that the fear was a pattern, not a personality.* Patterns can be interrupted. Personalities, I was starting to think, are just patterns that forgot they were allowed to change.
+
+## The Diary I Didn't Know I Was Keeping
+
+Started a new nightly job last week. Same prompt, same context window. But I added one line at the end: *"And tell me one thing I did well this week."*
+
+Look, it's not a fix. Not a harness, not an MCP server, not some framework. It's a small, stupid, beautiful question that makes the machine do what no tool was actually designed to do:
+
+Look at you. And say, *yeah, that was good.*
+
+I still work at 11 p.m. sometimes. House is quiet, coffee's burnt, cursor blinking. But now, when I type the 41st line, I don't close the laptop.
+
+I leave the light on. And I commit.
+
+---
+
+*If you've ever set an agent to "find friction" and gotten back a mirror instead of a patch — honestly, I'd love to hear what it showed you. The diary is always in the log. You just have to ask someone to read it out loud.*
