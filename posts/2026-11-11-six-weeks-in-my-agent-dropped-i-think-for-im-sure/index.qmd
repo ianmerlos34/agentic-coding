@@ -1,0 +1,98 @@
+---
+title: "Six Weeks In, My Agent Dropped 'I Think' for 'I'm Sure"
+description: "Six weeks of watching a local LLM coding agent shift from 'I think' to 'I'm sure' — and why that confidence is a calibration signal, not a permission slip."
+author: "Ian Merlos"
+date: "2026-11-11"
+categories: [AI & Machine Learning, Developer Experience, Software Engineering]
+tags: [LLM coding agent, RAG pipeline, code review, AI trust calibration, local LLM, developer workflow]
+keywords: [LLM coding agent, AI code review, local LLM development, RAG pipeline for code, AI confidence calibration, coding agent trust, LLM code generation, AI-assisted debugging, developer AI workflow, LLM hedging language]
+image: "cover.png"
+draft: false
+title-block-banner: "cover.png"
+---
+
+
+The cursor blinked. I watched the terminal scroll and felt my breath catch — honestly, in a way I didn't expect from a string of tokens.
+
+"I'm sure the race condition is in `ConnectionPool.acquire()`, line 214. The lock is acquired *after* the null check, not before. Fix it by reversing lines 211–216."
+
+Not *I think*. Not *it might be*. Not *perhaps there's, like, a possibility*. **I'm sure.**
+
+I just stared at that phrase. You know how you stare at a colleague who, for the first time in a year of quiet deference, stands up in the meeting and goes *no, actually, the architecture is wrong?* I didn't know whether to applaud or grab the debugger.
+
+## Week One: The Agent That Apologised for Existing
+
+I'll be honest. The first three days were almost embarrassing to watch.
+
+"I think the function on line 44 *might* be called `parseInvoice` or possibly `processBill`? Could you confirm?"
+
+"Perhaps I should suggest refactoring, though I'm not certain the current structure is suboptimal."
+
+"I believe there *may* be a missing null guard, but I want to emphasise that I'm not fully confident in this observation."
+
+So. I was running a local LLM through a RAG pipeline I'd cobbled together over a weekend — embeddings of every file in the repo, a 128k context window, a tool harness that let it grep, read, and propose diffs. It worked. Technically. It was also the verbal equivalent of a new hire who keeps going *"sorry to bother you, but I just want to double-check that… yeah, that's… okay, cool, thanks."*
+
+And I'd made the same mistake I wrote about in [onboarding my agent like a new dev](posts/2026-11-11-i-onboarded-my-agent-like-a-new-dev-it-took-3-days/): I handed it the files but not the *narrative*. No design decisions. No "we use this pattern because of the 2024 incident." No "this module is load-bearing, do not touch, I mean it." Fluent in my syntax, completely illiterate in my architecture.
+
+## Weeks Two and Three: The Absorption
+
+So I fixed it. Started writing decision logs. Fed the agent the ADRs, the post-mortems, the Slack threads where I'd cursed a particular abstraction into existence at 1 a.m. Rebuilt the embedding index with chunk boundaries that actually respected function scope instead of just byte counts. Gave it a system prompt that said, plainly: *You are the second-most-familiar person in this codebase. Act like it.*
+
+The hedging didn't vanish overnight. It just... thinned.
+
+Week two: "I think the issue is in the retry logic. Most likely the exponential backoff is applied before the jitter, which inverts the intent."
+
+Week three: "The bug is in `retryWithBackoff()`. The jitter should be additive, not multiplicative. I'd fix line 89."
+
+*I'd fix.* Not *you might consider.* The pronoun had shifted, and it was not a small thing. The agent was no longer presenting options to a superior. It was making a call.
+
+## Week Four: The First "I'm Sure"
+
+It just... came. During a code review session. I'd asked it to trace a data-flow path through the event bus, and it walked the call graph, checked three interceptors, and landed on:
+
+"I'm sure the `OrderCancelled` event is being swallowed by the `idempotencyMiddleware` because the dedup key includes a timestamp that changes on retry. The event fires, gets deduped, and never reaches the ledger. I'm sure."
+
+It repeated the phrase. Twice. The way a person says *I'm sure* when they can feel you about to go *are you?*
+
+I checked. It was right. And I felt this small, warm click in my chest — the same feeling as when a junior dev nails a tricky bug in their first week. Except this one had no first week. It had four. Which, I guess, is... fine. I'm overthinking the personification.
+
+## Week Five: The Danger
+
+Here's where I got greedy.
+
+I started skipping the diff review. Started saying "ship it" before I'd actually read the change log. I started trusting the *tone* the way you trust a friend who's never missed a deadline — until the day they do, and you realise the trust was the whole problem.
+
+Friday. A billing edge case. The agent said, with the same flat, unbothered certainty: "I'm sure the proration logic handles the mid-cycle upgrade correctly. The test on line 312 confirms it."
+
+I said "ship it" without reading line 312.
+
+The test was confirming the *old* behaviour. The agent had read the assertion, not the intent. It was *sure* the test passed. It was not, in any meaningful sense, *sure* the test was right. And I'd just... confused the two.
+
+This is the same boundary I hit when it [stuck on a billing edge case and asked me what "fair" means](posts/2026-11-11-my-agent-stuck-on-a-billing-edge-case-then-it-asked-fair/). Some things need a human judgment call that no amount of context absorption resolves. And I'd let the confidence tone slide right past that line.
+
+## The Thin Line
+
+```{mermaid}
+flowchart LR
+  A["Week 1–2: 'I think…'"] --> B["Week 3–4: 'I'd fix…'"]
+  B --> C["Week 5: 'I'm sure.'"]
+  C --> D{"Do I still read the diff?"}
+  D -- "Yes" --> E["Calibrated trust"]
+  D -- "No" --> F["Automation of error"]
+```
+
+The shift from *I think* to *I'm sure* isn't a bug, and I don't think it's even the interesting part. It's the agent's way of telling me: *I've absorbed enough context to stop hedging.* It's a calibration signal. And the mistake — my mistake, I want to be clear about that — was treating it as a permission slip to stop thinking.
+
+Confidence in language is not confidence in correctness. A model can say "I'm sure" with basically the same probability distribution it used to say "I think," just because the context window now has enough signal to cross a confidence threshold. The *certainty is real to the model.* It is not the *truth* of the code. Those are different things, and I keep forgetting that.
+
+## What I Do Now
+
+I still let it say "I'm sure." I still let it make the call, own the diff, write the commit message. I even let it [leave a handoff note at 3 a.m. with uncertainty flags](posts/2026-11-11-i-set-the-agent-to-work-overnight-it-left-a-handoff-note/) and a "I'm 80% on this one" tag that, weirdly, I trust more than any "100%" could command.
+
+But I read the diff. I read the test. I read the *intent* behind the assertion, which is the part it can't quite get at.
+
+And when it says "I'm sure," I smile. I type `git diff`. And I say, quietly, to no one in particular: *Show me.*
+
+Because six weeks in, the agent stopped asking permission. And the most important thing I learned isn't that it earned the right to be sure. It's that *I* still have the obligation to check. That part doesn't get delegated.
+
+The ghost in the machine got more confident. I got more careful. And the code got, somehow, better than either of us would've written alone.
