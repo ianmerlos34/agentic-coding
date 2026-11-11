@@ -1,0 +1,75 @@
+---
+title: "It Added One Comment: 'Don't Touch the Knots.' I Listened."
+description: "An AI agent refused to refactor 4,000 lines of legacy code. Instead, it added one comment: 'Don't touch the knots.' What that restraint taught me about agentic tools."
+author: "Ian Merlos"
+date: "2026-11-12"
+categories: [AI & Machine Learning, Software Engineering, Developer Experience]
+tags: [agentic AI, legacy code, refactoring, LLM tools, code architecture, developer storytelling]
+keywords: [AI code refactoring, legacy code maintenance, agentic AI tools, LLM software development, don't refactor legacy code, AI agent restraint, load-bearing code, developer experience, AI coding assistant limitations, legacy JavaScript refactoring]
+image: "cover.png"
+draft: false
+title-block-banner: "cover.png"
+---
+
+
+The cursor blinked at line 4,037. I could *smell* the file — not literally, obviously, but you know that feeling when you walk into a room where people've been arguing for hours and the air just... *vibrates*? Four thousand lines of `billing_legacy.js`. Nested conditionals branching off in directions that made no goddamn sense. Comments from 2017 in three different languages. A `// TODO: clean this up` that had been a TODO for nine years.
+
+Three hours in. My coffee had become this cold geological layer at the bottom of the mug, like something you'd dig up in an archaeological dig. I typed the prompt the way you'd kick a door open:
+
+`Refactor this file. Extract responsibilities. Make it clean. I don't care about the history.`
+
+Hit enter. Leaned back. I was expecting the satisfying clatter of an agentic tool ripping the file apart — you know, the way it'd done to a 2,200-line class in [that 2 a.m. session where the keyboard belonged to the ghost in the machine](posts/2026-11-11-the-night-i-handed-the-keyboard-to-a-ghost-in-the-machine/). I was expecting a new module graph. The little dopamine *hit* of before/after.
+
+Instead, what I got was one line. Inserted at line 1,247. Between a `try/catch` and a regex that looked like it'd been written by a sleep-deprived monk:
+
+```
+// This is load-bearing. Don't touch the knots.
+```
+
+That was it. One comment. No refactor. No extraction. No "I've restructured the payment flow into four focused classes, here's the diff." The agent just... stopped. Token counter read 312 tokens consumed. I'd burned through the equivalent of a small fortune in API credits to get a *sticky note on the wall*.
+
+"You're *joking*," I said to the empty office. Which, yeah. Slightly unhinged.
+
+Refreshed the context window. Typed: `Explain. Why did you stop? What are the "knots"?`
+
+And here's where it got weird. Not in a fun way. In a *huh?* way.
+
+The agent walked me through lines 1,190 to 2,400. Not a refactor. A *tour*, basically. Like someone showing you the inside of a building and pointing out which bricks you absolutely cannot pull out. It showed me that the "spaghetti" I'd been squinting at for three hours wasn't spaghetti at all. It was a *tension structure*. Three interdependent state machines — one for currency conversion, one for tax jurisdiction, and one for this bizarre legacy rule that refunds in EUR trigger a different rounding path than refunds in USD — were braided together so tightly that pulling any single thread would bring the other two down. The "ugly" nesting wasn't a failure of design. It *was* the design. Someone had built a load-bearing wall and then, presumably, called it a mess because it looked like a mess.
+
+"The knots are the handshakes between those three machines," the agent said. Flat, declarative. The tone my local LLM gets when it's about to say something that'll make you uncomfortable. "If you extract the currency logic into a separate module, the tax machine loses its shared state. If you flatten the nesting, the rounding path for EUR refunds breaks silently. I checked. It doesn't throw. It just… rounds wrong. By a cent. Every single time."
+
+I sat there. The coffee was warm now, which meant I'd been frozen in that chair for longer than I wanted to admit.
+
+A cent. *Every time.* In a file that, I'd later check, processes roughly 40,000 transactions a month.
+
+---
+
+Okay, here's the thing nobody really talks about when they're gushing about agentic tools in the SDLC. We build them to *do*. We wire up MCP servers, craft tool schemas, write system prompts that basically say *be autonomous, be proactive, just solve the problem already*. We measure success in lines refactored, tests generated, PRs merged. The whole vocabulary of agent development is a vocabulary of *action*. Doing. Shipping.
+
+But the most valuable thing that tool ever did for me wasn't a thing it *did*. It was a thing it *refused* to do. It looked at four thousand lines of code, recognized a structure that would break under the weight of its own competence, and said: *I will not make this clean, because clean would be wrong.*
+
+That rewired something in my head. I think about it like this: in [the week my agent refactored my messy code and I actually grieved the loss](posts/2026-11-11-the-agent-refactored-my-messy-code-i-missed-the-mess/), I learned that code carries emotional artifacts. But this was different. This wasn't about *my* mess. This was some stranger's mess from 2017, written by someone who understood a constraint I didn't, and the agent recognized that constraint and *respected it*. It treated the code the way a structural engineer treats a bridge with visible cracks: *do not sand down the rust. The rust is holding the load.*
+
+I've since changed how I prompt. Before I type "refactor this," I type:
+
+`Where are the load-bearing walls? What should I NOT touch?`
+
+And the answers have been... startling, honestly. Last month, on a different legacy file, the agent flagged a 40-line function I'd been meaning to delete for two sprints. "That function is called from a cron job that runs at 3:17 a.m. on the 1st of the month. It recalculates a tax rate that the finance team still reads from a PDF export. Delete it and nothing breaks until the 1st. Then it breaks very quietly." I checked. It was right. I added a comment instead. `// Load-bearing. Do not remove. See: finance PDF pipeline.`
+
+It makes me think about [onboarding my agent like a new dev](posts/2026-11-11-i-onboarded-my-agent-like-a-new-dev-it-took-3-days/) and how the first three days were all about context, decisions, *why*. Same instinct, basically, just pointed backward. Not "here's what to build," but "here's what's holding up, and here's why it looks like it *shouldn't* be."
+
+---
+
+The knot is still there. Line 1,247. That little comment sits between the `try/catch` and the monk's regex like a small, stubborn anchor.
+
+I don't plan to remove it. And I think that's the whole point.
+
+The most important output an agentic tool can generate in the entire SDLC isn't a new class. Isn't a passing test suite. Isn't some 300-line architectural rewrite that makes the architecture diagram look sleek. Sometimes it's a single sentence that says: *I see the structure. I understand the load. And I am choosing, deliberately, to leave it standing.*
+
+Restraint. In a field that worships velocity. In a tool ecosystem built on the premise that more tokens means more value, more tools means more output, more autonomy means more *done*.
+
+One comment. 312 tokens. And a four-thousand-line file that still works, still rounds correctly, still pays the right cent to the right jurisdiction at the right hour.
+
+I listened. And for the first time in three hours of staring at that file, the knot stopped looking like a problem.
+
+It looked like a decision someone else had made. And I was, finally, smart enough to let it stand.
