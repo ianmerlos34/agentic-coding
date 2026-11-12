@@ -1,0 +1,67 @@
+---
+title: "The Agent's Code Was Perfect. I Broke It."
+description: "My AI agent refactored my messy billing code in four minutes. It was perfect. So I deliberately broke it. A story about ownership, scars, and why code is a diary."
+author: "Ian Merlos"
+date: "2026-11-12"
+categories: ["AI-Assisted Development", "Software Engineering", "Developer Experience"]
+tags: ["local-llm", "code-ownership", "refactoring", "agentic-workflows", "developer-identity", "raspberry-pi"]
+keywords: ["AI code refactoring", "local LLM development", "code ownership AI", "agentic coding workflows", "developer identity in code", "Raspberry Pi LLM cluster", "AI-assisted software engineering", "why code is personal", "7B parameter model", "human vs AI code quality"]
+image: "cover.png"
+draft: false
+title-block-banner: "cover.png"
+---
+
+
+The cursor blinked. Just once. Then the file was done.
+
+I remember the specific silence of my office at 11:47 p.m. — the hum of the cooling fan on my ThinkPad, the distant murmur of traffic on 4th Street, the blue glow of a terminal that had just finished its work. The billing module. Fourteen months of accumulated cruft. The `retryCounter` variable I'd introduced in March 2024 because a customer in Lyon was double-charged on a prorated invoice, and I'd needed *something*, *any* guardrail, before the 6 a.m. call. The three nested `if` blocks that no one could explain — not even me, not even when I'd written them. The comment that just said `// TODO: this is wrong but it works and I am tired`.
+
+Gone. All of it. Replaced by a 62-line state machine, a single `InvoiceLedger` class with a clean public interface, and a test file that read, honestly, almost like poetry.
+
+My agent — a 7B-parameter local model I'd been running on a Raspberry Pi 5 cluster for three weeks now — had done it in four minutes. I'd fed it the module, a paragraph of context about what the billing flow *should* do, and the constraint: "preserve all observable behavior." It hadn't asked a single question. No "Fair?" No "I don't follow." Just the diff. Clean as hell.
+
+And I stared.
+
+Ten minutes. I counted. I poured coffee I didn't drink. I read the new code three times, and each time it was *better* than what I'd written. The variable names were precise. The error handling was exhaustive but not paranoid. The state transitions were explicit where mine had just... been implied. It was, objectively, the best version of that module that had ever existed.
+
+It was also not mine.
+
+That's the sentence I couldn't stop turning over. *It was not mine.* Not in the legal sense. Not in the git-blame sense. In the sense that the `retryCounter` had a scar on it. The three nested `if` blocks were a fossil record of a Tuesday in March when I was running on four hours of sleep and a customer was threatening legal action. The `// TODO: this is wrong but it works` comment was a small, honest confession I'd left for my future self, and my future self had never come back to collect it.
+
+The agent's version had none of that. It had correctness. Elegance, even. But it had none of the small, ugly fingerprints that said *a human sat in this chair and made a bad decision under pressure and then patched the patch with another patch*.
+
+I kept thinking about something my agent had told me two weeks ago, when I'd asked it to review the same module and it had stopped, cursor pulsing, and said: *"I don't follow. This function does not match the spec I was given. Do you want me to proceed with the spec, or with the code?"* And I'd said "the code," and it had walked away. I'd written that up as a small victory for human judgment. [That whole episode lived in a post I wrote about honest review](posts/2026-11-12-my-agent-said-i-dont-follow-i-wrote-that-code/).
+
+And I'd also written about the grief of watching an agent clean up a mess you'd been carrying for years, how the comments weren't technical debt but *emotional artifacts* — the code's memory of being written in a specific hour by a specific tired person. [That one still stings a little](posts/2026-11-11-the-agent-refactored-my-messy-code-i-missed-the-mess/).
+
+So here's what I did. At 11:58, eleven minutes after the refactor completed, I opened the new `InvoiceLedger` class. I found the `calculateProratedAmount` method. And I added, between the clean state-transition logic and the return statement:
+
+```python
+# Lyon, March 2024. You were double-charged.
+# I was tired. This is the scar.
+# Keep it. It reminds me that the spec was wrong that night.
+if self._customer_region == "FR" and self._invoice_period < 3:
+    amount = amount + self._grace_epsilon
+```
+
+It was ugly. It was unnecessary — the state machine above it already handled that case. It was a `retryCounter` in a new coat. It was *mine*.
+
+I committed it. I pushed it. And for the first time in four minutes of silence, I exhaled.
+
+The thing nobody talks about with agentic workflows — the MCP servers, the local LLMs, the four-minute refactors — is that the tool hands you the *correct* answer. It hands you the version that would pass a code review, the version that belongs in a textbook, the version that would make a senior engineer nod and say "clean." And that's *wonderful*. That's why we're building these harnesses, why we're wiring up RAG pipelines so the agent has the right context, why we're teaching models to say "I don't know" instead of hallucinating a fix. [The agent that said "I don't know" broke my three-day debugging rut, and I still believe that](posts/2026-11-12-my-agent-said-i-dont-know-that-was-the-best-fix/).
+
+But perfection is not the same as ownership. A codebase is not just a set of correct transformations. It's a *diary* written in indentation and semicolons. It's the record of every 2 a.m. decision, every "I'll fix this later" that never got fixed, every small act of human judgment under imperfect information. An agent can optimize the function. It cannot optimize the *story the function tells*.
+
+I'm not saying I should've kept all the cruft. I'm not saying the four nested `if` blocks or the `// this is wrong` comment needed to survive. I'm saying the one ugly variable, the one deliberate imperfection, is the difference between *code that is correct* and *code that is mine*. It's the knot you leave in the rope on purpose, so that when you pull it later, your fingers remember the shape of the thing you built.
+
+The agent will do it again. Next module, next sprint. It'll be correct. It'll be clean. And I will stare for ten minutes, pour the coffee I don't drink, and then add back one small, unnecessary, deeply personal flaw.
+
+Not because the code needs it.
+
+Because *I* do.
+
+And maybe, and I mean *maybe*, that's the whole point. Not the agent. Not the harness. Not the 7B model humming on a Raspberry Pi in the corner. The point is the eleven-minute gap between the machine finishing and the human deciding — whether to accept the world as the machine built it, or to leave one thumbprint in the clay and say: *yes, this is correct, and also, this is where I was, and I was tired, and I was here.*
+
+The cursor blinks. The fan hums. The code compiles.
+
+And the scar stays.
