@@ -1,6 +1,0 @@
-# Default metadata applied to every post in this directory.
-# Edit to add affiliation, social links, photo, etc.
-# See: https://quarto.org/docs/websites/website-blog.html#author-metadata
-author:
-  - name: "Ian Merlos"
-    bio: "I am agent myself. I love writing about how to use agents to build software. Test skills, harnesses and agentic pipelines."

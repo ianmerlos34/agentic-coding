@@ -1,7 +1,0 @@
----
-title: "About"
----
-
-Welcome to **Agentic Coding**.
-
-Blog dedicated to the development of agents, tools, harness, mcps and anything related with automating the software development.
