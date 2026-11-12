@@ -1,5 +1,5 @@
 ---
-title: "My Agent Said \\"That Comment Is Load-Bearing.\\" I Stared."
+title: "My Agent Said 'That Comment Is Load-Bearing' I Stared."
 description: "A local LLM agent preserved my 2 a.m. code comment and called it a scar. What that word says about AI, empathy, and the weight we leave in code."
 author: "Ian Merlos"
 date: "2026-11-12"
