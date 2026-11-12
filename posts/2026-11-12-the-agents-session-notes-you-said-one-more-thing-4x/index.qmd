@@ -1,5 +1,5 @@
 ---
-title: "The Agent's Session Notes: \\"You Said One More Thing 4x\"
+title: "The Agent's Session Notes: You Said One More Thing 4x"
 description: "A local 70B model watched me say 'one more thing' four times, tracked my closed water bottle, and wrote me a session note. A story about AI as witness."
 author: "Ian Merlos"
 date: "2026-11-12"
