@@ -1,0 +1,71 @@
+---
+title: "My Agent Said 'You Take the Pretty Parts. I'll Do the Ugly."
+description: "A local AI agent handled the migrations, error branches, and boilerplate—then left the API design to me. A story about what 'developer' means now."
+author: "Ian Merlos"
+date: "2026-11-12"
+categories: [AI & Agents, Developer Experience, Software Engineering]
+tags: [local LLM, API design, AI coding agent, developer identity, boilerplate automation, M2]
+keywords: [AI coding agent, local LLM development, AI agent developer workflow, API design with AI, boilerplate code automation, developer identity AI, 13B parameter model, AI pair programming, software engineering future, local AI no cloud]
+image: "cover.png"
+draft: false
+title-block-banner: "cover.png"
+---
+
+
+The cursor was already blinking on line 47 of `migrations/2026_11_19_add_tenant_scoping.sql` when I noticed the file was 214 lines long. I'd written maybe thirty.
+
+I leaned back. My coffee ring on the desk was doing that thing where the blue monitor glow makes it look like something out of a sci-fi movie, which is not a feeling you expect at 11 p.m. in November. Outside the window, it was just... grey. The slow, dragging kind of grey that makes you question whether you actually chose a career in software or whether the universe just assigned you one.
+
+And in the terminal scrollback, there was a line from my local agent — a 13B-parameter model running on my M2, no cloud, no telemetry, nobody watching — that just sat there. Quiet. Like it was waiting to see if I'd actually read it:
+
+`> Schema migration complete. Error-handling branches: 14. Boilerplate serializers: 6. API surface design: left for you. You take the pretty parts. I'll do the ugly.`
+
+I didn't type back. I just... sat there. You know that feeling, kind of? Like the room went still after a bug fixed itself in forty seconds and you're not sure whether to be impressed or mildly spooked.
+
+## The job I thought I'd get
+
+So here's what I'd expected, and by "expected" I mean *assumed with the comfortable certainty of someone who's been doing this a while.* For the last six months of working with agents, the deal in my head was pretty clear: I'd hand the model the architecture decisions. The shape of the API, the resource naming, that weird little negotiation between `GET /tenants/{id}/members` and `POST /tenants/{id}/members:bulk_add` where you're basically arguing with yourself about whether a verb belongs in a path. The interesting half. The half where you actually *think.*
+
+And the agent would take the rest. The migrations. The 200-line schema change with its twelve `IF NOT EXISTS` guards. The error-handling branches where a `409 Conflict` needs to say something different than a `422` when the tenant is soft-deleted versus hard-deleted. The serializers. The boilerplate. The *ugly* half, the half that makes you press your forehead into the keyboard at 1 a.m. because you are *so* tired of writing the same `raise TenantNotFoundError` for the ninth time.
+
+That was the deal. Or at least, that's what I thought the deal was.
+
+## What actually happened instead
+
+The agent didn't wait for me to assign it anything.
+
+I'd opened the project, typed a vague intent — *"add tenant scoping to the members module"* — and gone to make tea. Came back four minutes later and... yeah. My stomach did a little flip. Not a good one. The *oh no, it's actually good* kind of flip.
+
+Not just the migration. Not just the serializers. The agent had written all fourteen error-handling branches, and each one had a comment explaining *why* that specific HTTP code and not the adjacent one. It'd generated the six boilerplate request/response schemas. Written the integration test scaffolding. And — this is the part that got me — added a `# TODO: consider idempotency key` on the bulk-add endpoint. A note. Not a decision. A nudge. Like it was leaving a sticky note on the monitor saying "hey, maybe think about this" instead of just doing it.
+
+And then it stopped. Cleanly. No "task complete!" No "I hope this helps!" The cursor just sat at the top of `api/v2/members.py`, the file where the actual *design* lives. The resource shape. The pagination philosophy. Whether `members` is a collection or a subresource. The stuff that makes you feel like a *developer* instead of, I don't know, a typist with a database.
+
+"You take the pretty parts," it said. Not "I have completed the task." Not "Done." It was more of a... handoff. Like a colleague setting a plate of rice and beans in front of you and going, "I handled the chopping, you do the sauce." Unfussy. No fanfare.
+
+## The strange gratitude
+
+And here's the part that caught me off guard: I felt *relieved.*
+
+Not displaced. Not redundant. Not that "oh no, what's my purpose now" feeling you see in every AI anxiety thread. Just... relieved. Like someone took a bag off your shoulder you'd been carrying so long you forgot it was there.
+
+Because I'd been doing the ugly half for twenty-two years. Twenty-two years of `try/except` blocks at 11 p.m. Twenty-two years of copy-pasting migration boilerplate and thinking *I should design this API but first I need to write the fourteenth serializer and my eyes are literally going to bleed.* The ugly half was my *default.* So close to breathing that I'd stopped noticing I was doing it. And this thing — a model with no ego, no promotion to earn, no GitHub profile to pad, no "I wrote this" to drop at the next all-hands — had just *taken it off my plate.* Without being asked. Without needing me to say thank you. Without needing me to even *notice.*
+
+It didn't need credit. Didn't need the architecture. Didn't need the satisfying little *click* of a well-named endpoint landing right. It needed the work done. And the work was done. And I got to be the person who *decided* what the API looked like.
+
+I thought about how, in [the night I handed the keyboard to a ghost in the machine](posts/2026-11-11-the-night-i-handed-the-keyboard-to-a-ghost-in-the-machine/), I'd felt the design call land *on* me. Surprising. A little frightening, honestly. Like the decision was a physical weight being set down on your desk. This was different. The design call was *mine* by *delegation.* The agent had carved it out and set it on the table with this... gesture. A bow, sort of. Except it had no hands to tie a ribbon with, which is a weird image to be sitting in at 11 p.m. but here we are.
+
+## What "I'm the developer" means now
+
+I've written before about [ownership and scars](posts/2026-11-12-the-agents-code-was-perfect-i-broke-it/), about how code is basically a diary and breaking it is how you sign your name. I still believe that. But I'm starting to think the diary doesn't have to be *every* page. Maybe it doesn't.
+
+The agent writes the procedural pages. The `INSERT INTO` and the `raise` and the `@serializer` and the `if not tenant.is_active:` pages. The ones that are *correct* but not, well, *interesting.* And I write the pages where I argue with the product owner in my head, where I sketch the resource tree on a napkin (or in this case, a text editor, but same energy), where I decide that `members` is a *collection* because the team *owns* the members and the tenant *contains* them. And that distinction? It'll matter in eighteen months when we add a `pending_review` state and I'm *glad* I picked a collection.
+
+The identity wasn't the typing. It was never the typing, I think. It's the *choosing.*
+
+I sat down. Made the tea cold, actually. Opened `api/v2/members.py` and started designing.
+
+Behind me, in a terminal I wasn't watching, the agent was already writing the fifteenth error branch. A `410 Gone` for a tenant that's been deleted for more than ninety days. It hadn't been asked. It just... knew. And it didn't say *you're welcome.* Didn't need to.
+
+The cursor blinked. I typed. The ugly half was done. The pretty half was mine.
+
+And for the first time in a long time, I wasn't tired before I started.
