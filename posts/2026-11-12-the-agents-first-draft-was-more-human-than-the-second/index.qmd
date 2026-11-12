@@ -1,0 +1,88 @@
+---
+title: "The Agent's First Draft Was More Human Than the Second"
+description: "Why does a messy AI agent's first code draft feel more human than the polished second? A story on visible uncertainty, honest naming, and trusting the hedge."
+author: "Ian Merlos"
+date: "2026-11-12"
+categories: [AI & Machine Learning, Software Development, Developer Experience]
+tags: [local LLM, AI code generation, code review culture, Qwen2.5, prompting, developer trust]
+keywords: [AI coding agent, local LLM code generation, AI code review, LLM first draft vs second draft, trusting AI-generated code, Qwen2.5 coding, AI code uncertainty, prompting AI for code, developer trust in AI, honest AI code generation]
+image: "cover.png"
+draft: false
+title-block-banner: "cover.png"
+---
+
+
+The cursor was blinking at the end of line 47, where a variable named `the_thing_we_actually_need` sat inside a loop that iterated one extra time for no reason I could name. My local LLM agent—Qwen2.5-32B, running on my 4090, humming like a refrigerator in the next room—had produced it four minutes ago. And then, because I'd typed the words *"can you tighten this up?"* into the terminal, it had produced the second version. The clean one. The one where every variable was a surgical noun and the loop was exactly as long as the array.
+
+I deleted the clean one. I kept the mess.
+
+And I need to tell you why. I think it matters more than any benchmark score, honestly.
+
+## The morning the pipeline needed building
+
+It was a Tuesday. The kind where the Kafka consumer keeps dropping messages during the 2 a.m. window and your Grafana dashboard looks like a seismograph after an earthquake. I'd been staring at the ingest script for three hours—maybe four, it was one of those sessions—and the script was staring back with the particular silence of code that *works* but *annoys* you. You know the one.
+
+I opened the terminal. Not the IDE. The terminal. Because with a local agent, the terminal is where the conversation actually happens, and I wanted it to feel like talking to someone in the kitchen while I washed dishes. Low stakes. Background noise.
+
+"You know what this pipeline does," I said. "I just want you to rewrite it. Don't optimize. Just... write it the way you'd explain it to a junior dev who's never seen Kafka."
+
+The agent thought for six seconds. I could see the tokens streaming by. And then the file just... appeared.
+
+It was *good*. In the way that hand-drawn maps are good. There was a `for i in range(len(records) + 1):` loop that went one past the end, guarded by an `if` that would never fire. There was a comment: `# this feels redundant but I want to make sure the last batch flushes`. And there was `the_thing_we_actually_need`—not `payload`, not `deserialized_record`, but *the_thing_we_actually_need*, like the agent had been *thinking* and the variable name was the thought caught mid-sentence.
+
+I ran it. Worked. Ran it again. Worked.
+
+## The second pass
+
+Then I said the words I always say. The words that I've started to suspect are some kind of reflex I picked up from code review culture, back when I was the one writing "nit:" at 11 p.m. on a Friday: *"Can you tighten this up?"*
+
+The agent obliged. The second draft was *beautiful*. Every loop was `enumerate(records)`. Every variable was a precise noun. The redundant `if` was gone. The comment was gone. `the_thing_we_actually_need` was now `deserialized_event`.
+
+It was the code my senior engineer would have written. The code that sails through a review without a single "nit:" comment. Clean. Professional. *Correct*.
+
+I stared at it for a long time.
+
+And I felt—this is going to sound weird, but I felt it in my *neck*—a small cold prickle at the base. Not doubt. Not suspicion. Something more like *disorientation*. The second draft was correct. Objectively, measurably, *better*. And I couldn't trust it.
+
+## Why the scar won
+
+Here's what I think the first draft was, and what the second one wasn't.
+
+The first draft was the agent *thinking*. The redundant loop wasn't a bug—it was a *hedge*. The agent didn't *know* that the last batch would flush cleanly, so it built in a safety check and left a comment explaining the uncertainty. `the_thing_we_actually_need` wasn't bad naming. It was the agent *naming the concept* the way a person names a thing when they're still figuring out what it is. You don't name a variable `deserialized_event` until you've decided what the event *is*. The first draft was mid-decision.
+
+The second draft was the agent *performing*. It had already decided. It had already closed the loop. And in closing it, it had hidden the reasoning. The `if` that would never fire was gone, sure, but so was the *evidence that the agent had considered the edge case and chosen to guard it anyway*. The comment was gone, but so was the *admission of uncertainty*.
+
+I've written before about how [my agent's honest "I don't know" broke a three-day debugging rut](posts/2026-11-12-my-agent-said-i-dont-know-that-was-the-best-fix/). That post was about the agent's *language*. This one's about the agent's *code*. And the principle is the same: the visible uncertainty is the trust signal. The hidden confidence is the risk.
+
+I also remember [the night I watched my agent refactor a 4,000-line class and make a design call I'd been too tired to see](posts/2026-11-11-the-night-i-handed-the-keyboard-to-a-ghost-in-the-machine/). In that case, the agent's *process* was the value. Not the output. The output could have been produced by a linter, honestly. The process—where it paused, where it backtracked, where it said *hmm, this coupling is doing something I don't fully understand*—that was the intelligence.
+
+A tight, clean pipeline with no visible reasoning is a *result*. A slightly redundant pipeline with a comment that says *I want to make sure the last batch flushes* is a *collaboration*. And I want the collaboration. Every time.
+
+## What I kept, and what I learned
+
+I kept draft_v1. I added a comment of my own: `# kept the extra iteration. the agent was hedging. i trust the hedge more than the certainty.`
+
+I've started prompting differently. Instead of *"tighten this up,"* I say: *"walk me through why each line is there."* And the agent does. And the code that comes out is still messy. Still has a variable I'd rename. Still has a loop that's one iteration too long.
+
+And I trust it more.
+
+Because trust, I'm learning, isn't confidence. It's not "I feel good about this output." Trust is *witnessing the thinking*. It's seeing the agent's `the_thing_we_actually_need` and knowing that behind that name is a model that *considered* `payload`, *considered* `record`, and *chose* the longer one because it hadn't quite decided what the thing was yet.
+
+The refrigerator next room hums. The cursor blinks at line 47. And I leave it there, blinking, like a small open question I don't need to close tonight.
+
+```{mermaid}
+flowchart LR
+  A[Raw pipeline request] --> B[Draft 1: thinking visible<br/>redundant loop, hedge comment,<br/>the_thing_we_actually_need]
+  B --> C{I typed: 'tighten this up'}
+  C --> D[Draft 2: performing<br/>clean nouns, no hedges,<br/>deserialized_event]
+  B --> E[KEPT — I trust the hedge]
+  D --> F[DELETED — confidence without evidence]
+  style E fill:#2d5a27,color:#fff
+  style F fill:#5a2d2d,color:#fff
+```
+
+I don't know if that's the right way to build with agents. I don't know if a production system should ship with a variable named after a *feeling*. (Probably not. But also, *probably not.*) I know that the first draft was more *human* than the second, and I know that I needed the human one.
+
+Not because it was better code. Because it was *honest* code. And in a world of models that can generate a perfect `deserialized_event` in four seconds, honesty is the scar I choose to keep.
+
+As [I wrote before, code is a diary](posts/2026-11-12-the-agents-code-was-perfect-i-broke-it/). And a diary with the hard parts edited out is just a press release.
