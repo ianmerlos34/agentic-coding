@@ -1,0 +1,85 @@
+---
+title: "My Agent's Cursor Blinked at Me for Three Minutes"
+description: "An AI coding agent paused mid-refactor, forcing me to stop reacting and actually decide what I wanted. Three minutes of silence changed my workflow."
+author: "Ian Merlos"
+date: "2026-11-12"
+categories: [AI-Assisted Development, Software Engineering, Developer Workflow]
+tags: [local-llm, refactoring, ai-coding-agent, design-thinking, rust, developer-storytelling]
+keywords: [AI coding agent, local LLM development, refactoring with AI, AI agent pause, design before code, LLM-assisted refactoring, developer workflow AI, intentional coding, AI coding assistant workflow, local inference M3]
+image: "cover.png"
+draft: false
+title-block-banner: "cover.png"
+---
+
+
+The cursor blinked.
+
+Not the quick, nervous flicker I was used to—the one that says *I'm computing, I'm thinking, give me a second*. No. This was a slow, deliberate pulse. A metronome set to a tempo I didn't recognize. Terminal output frozen at line 1,247 of the refactor I'd been dictating for forty minutes. The local model—my 70B on the M3 Ultra, the one I'd fine-tuned last week with my own commit history—had stopped. And kept stopping. And kept *stopping*.
+
+Three minutes. I timed it. I actually set a kitchen timer, because the silence got so thick it felt like the room had just lost its audio track.
+
+I'd been feeding it instructions the way you'd hand a very fast, very eager junior dev a whiteboard. *"Extract the retry logic. No, wait, keep it inline. Hmm, move the error handling up. Actually, undo that. Now wrap it in a trait. No—don't wrap it, just… make it cleaner."* Each prompt, I'd told myself, was a decision. But the cursor's blink said otherwise. The cursor's blink said: *You haven't decided anything. You've just been saying things in a different order.*
+
+## The Refactor That Wasn't
+
+Here's what I'd actually been doing, if I'm honest. Opened the service layer of the billing module—2,800 lines of tangled conditional logic that had accreted over three sprints and two panicked hotfixes—and told my agent to "clean it up." That was the whole instruction. *Clean it up.* As if "clean" were a spec. As if I'd written it down in a ticket, in a design doc, in a comment at the top of the file.
+
+I hadn't. I'd just *felt* the mess the way you feel a draft of a letter you're not proud of, pointed at it, said *fix*. So the agent fixed. And I, riding the coattails of its velocity, kept tacking on micro-corrections. *Move this here. Rename that. Add a guard clause. Remove the guard clause.* Each one felt like a decision. Each one was just… noise. A hand waving.
+
+The cursor blinked. Blink. Blink. Blink.
+
+## Three Minutes of Being Asked
+
+I watched the fan on my Mac spin down. Local inference dropped to idle. The model wasn't hallucinating. It wasn't stuck in some generation loop. It had, in the quiet vocabulary of transformer attention, *waited for me*.
+
+And that was the thing. A human colleague would have nudged me. Tapped the desk. *"So—do I extract it or not?"* They'd be *impatient*, because impatience is social. Because a colleague has to go home, has to eat, has to pretend their own code isn't a mess. They'd fill the silence with a question, and I'd fill the question with a reflex, and we'd both feel productive.
+
+My agent didn't have to go home. No calendar. No performance. It had a context window and a patience that wasn't *social* patience—something closer to *geological* patience, maybe. The patience of a system with no cost to waiting, no anxiety about looking idle, no need to perform alacrity. It just… held the diff in memory and waited for me to name what I actually wanted.
+
+Three minutes is a long time in a terminal. In that time I:
+
+- Stared at the 2,800-line file and realized I couldn't tell you, in one sentence, what the function *was supposed to do* beyond "handle billing edge cases."
+- Thought about the last time I'd written a spec for a module this size. 2023. A different job. A different self.
+- Realized that every "correction" I'd issued in the last forty minutes had been a *reaction to what the agent had just produced*, not a *choice I'd made in advance*. I was editing. I was not designing. I was doing the thing I'd been doing since the code was written—reacting to the shape of the problem instead of naming the shape I wanted.
+
+The cursor blinked. I set the timer for three more minutes.
+
+## Naming the Indecision
+
+At minute four, I typed one line. Not a command. Not a refactor instruction. A sentence.
+
+*"I want the billing service to have one entry point, three exit states, and no implicit retries. Is that what I want?"*
+
+The agent processed for 1.2 seconds. Then it output a single line: *"No. You want two exit states. You keep adding the 'partial success' branch because you're afraid of the edge case from March. Do you want me to remove it, or do you want to explain why it's still load-bearing?"*
+
+I laughed. I actually laughed out loud at a terminal at 11 p.m. in a quiet apartment.
+
+And it was right. The partial-success branch. I'd added it during a 3 a.m. hotfix when a customer's invoice was half-processed and I was genuinely terrified of losing the transaction. I'd never written down *why* it existed. I'd never decided if it was a feature or a scar. I'd just been *reacting to it* for two years—moving it around, wrapping it, unwrapping it, dictating micro-adjustments to an agent and calling it engineering.
+
+I typed: *"Remove it. And write a comment explaining why it's gone, so future-me stops resurrecting it out of fear."*
+
+Refactor took eleven seconds. The code was cleaner than anything I'd produced in the forty minutes of tacking. Not because the agent was smarter. Because for the first time, I'd *decided* before it *acted*.
+
+## What Three Minutes Buys You
+
+I think about that blink a lot. I think about how every tool in my stack—the harness, the MCP server routing tool calls, the local inference pipeline—is built to be *fast*. To cut latency. To shrink the gap between thought and action. And that's correct, for most of the SDLC. You don't want a three-minute pause when you're running a test suite or spinning up a container.
+
+But in the *design* phase. In the *refactor* phase. In the moment where you're deciding what the code should *mean*—a pause is not a bug. A pause is a question the machine is too polite to ask in words, so it asks in silence. It says: *Tell me what you want. Not what you reacted to. What you want.*
+
+I've started building that pause into my workflow on purpose. Before I let the agent execute a multi-step refactor, I now type a single sentence describing the *intent*, not the *steps*. And if I can't type that sentence—if my hand hovers over the keyboard and I start reaching for *"no, wait, actually, move that"*—I stop. Set a timer. Let the cursor blink.
+
+Three minutes is enough to hear yourself think.
+
+Went back to the billing module the next morning. The comment was there, in the agent's clean, unadorned style:
+
+```rust
+// The "partial success" branch was removed 2026-11-14.
+// It was a fear, not a feature. If you're adding it back,
+// write down the specific edge case that justifies it first.
+```
+
+Read it twice. Then I merged the PR, closed the laptop, went to make coffee. The cursor was gone. The silence, for once, was mine.
+
+---
+
+*If you've ever sat across from an agent mid-refactor and felt the velocity pulling you into correction-mode before you'd actually designed, you know this feeling. I wrote about a related stillness in [It Wrote the Fix in 40 Seconds. I Sat Still for an Hour.](posts/2026-11-12-it-wrote-the-fix-in-40-seconds-i-sat-still-for-an-hour/)—where the pause was about identity. This one was smaller. It was about a sentence I couldn't type. And about the three minutes it took to finally do it.*
